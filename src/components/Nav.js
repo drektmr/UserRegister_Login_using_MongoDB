@@ -9,11 +9,13 @@ import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import {NavLink} from "react-router-dom";
+import {useContext} from "react";
+import UserContext from "./UserContext";
 
 export default function PrimarySearchAppBar() {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
-
+    const {userLogged} = useContext(UserContext);
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
@@ -95,12 +97,22 @@ export default function PrimarySearchAppBar() {
                     </Typography>
                     <Box sx={{flexGrow: 1}}/>
                     <Box sx={{display: {xs: 'none', md: 'flex'}}}>
-                        <NavLink to="/Register">
+                        <NavLink to="/">
+                            <IconButton size="large" aria-label="Login" color="inherit">
+                                <label className="forms" >Home</label>
+                            </IconButton>
+                        </NavLink>
+                        <NavLink to="/Profile" hidden={userLogged?false:true}>
+                            <IconButton size="large" aria-label="Login" color="inherit">
+                                <label className="forms" >Profile</label>
+                            </IconButton>
+                        </NavLink>
+                        <NavLink to="/Register" hidden={!userLogged?false:true}>
                             <IconButton size="large" aria-label="Register" color="inherit">
                                 <label className="forms" >Register</label>
                             </IconButton>
                         </NavLink>
-                        <NavLink to="/Login">
+                        <NavLink to="/Login" hidden={!userLogged?false:true}>
                             <IconButton size="large" aria-label="Login" color="inherit">
                                 <label className="forms" >Login</label>
                             </IconButton>

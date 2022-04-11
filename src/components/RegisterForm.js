@@ -1,8 +1,13 @@
-import React, {useReducer,useState} from "react";
-import {fetchData} from "../helpers/fetch";
+import React, {useContext, useReducer, useState} from "react";
+import {useNavigate} from "react-router-dom";
+//import UserContext from "./UserContext";
 function RegisterForm() {
+    /*!body.checked*/
+    const [name, setName] = useState();
+    const [lastName, setLastName] = useState();
+    const [email, setEmail] = useState();
+    const [password, setPassword] = useState();
     const initialError = {name:"", lastName:"" ,email: "", password: ""};
-    const [password, setPassword] = useState([]);
     const [error, updateError] = useReducer(
         (error, updates) => ({
             ...error,
@@ -10,7 +15,7 @@ function RegisterForm() {
         }),
         initialError
     );
-    const users= [];
+    const navigation=useNavigate();
     const regexs = {
         name: /^[a-zA-ZÀ-ÿ\s]{1,40}$/, // No puede contener numeros
         lastName: /^[a-zA-ZÀ-ÿ\s]{1,40}$/, // No puede contener numeros
@@ -23,17 +28,35 @@ function RegisterForm() {
         [...e.target].map((element) => {
             if (element.type !== "submit") validation(element);
         })
-        console.log(users)
+
         if(!error.name && !error.lastName && !error.email && !error.password){
-            fetchData("http://192.168.25.2:8080/users/register", {
-                method: "post",
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(users),
-            });
+            send(e.target);
         }
+    }
+
+    const send= async(form)=>{
+
+        let data={
+            name: name,
+            lastName: lastName,
+            email: email,
+            password: password
+        }
+        console.log(data)
+        let user= await fetch(form.action, {
+            method: "post",
+            body: JSON.stringify(data),
+            headers:{
+                'Accept': 'application/json',
+                'Content-Type':'application/json'
+            }
+        })
+            .then((response)=>{
+                return response.json();
+            })
+            if(user["_id"]){
+                navigation("/",{replace: true});
+            }
     }
 
     const onChange = (e) => {
@@ -72,23 +95,30 @@ function RegisterForm() {
             }else if(name==="confPassword" && value!==password){
                 msg = "Passwords don't match"
             }else{
-                if(name==="password" && regexs.password.test(value)){
+                if(name==="name" && regexs.name.test(value)){
+                    setName(value);
+                }else if(name==="lastName" && regexs.lastName.test(value)){
+                    setLastName(value);
+                }else if(name==="email" && regexs.email.test(value)){
+                    setEmail(value);
+                }else if(name==="password" && regexs.password.test(value)){
                     setPassword(value);
-                }else{
-                    msg=false
                 }
+                msg=false
+
             }
         }
         if(name==="confPassword"){
             updateError({password: msg});
         }else{
+
             updateError({[name]: msg})
         }
     }
 
     return (
 
-        <form className="form" onSubmit={handleSubmit} noValidate>
+        <form className="form" action="http://192.168.25.5:8080/users/register" onSubmit={handleSubmit} noValidate>
             <ul>
                 <li><label>Name</label></li>
                 <li><input name="name" type="text" onChange={onChange} required/></li>
