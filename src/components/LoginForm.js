@@ -20,6 +20,7 @@ function LoginForm() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        console.log(e);
         [...e.target].map((element) => {
             if (element.type !== "submit") validation(element);
         })
@@ -39,10 +40,12 @@ function LoginForm() {
         } else if (name === "password" && !value) {
             msg = "Password is required"
         } else {
+            console.log(name);
+            debugger
             if (name === "email") {
                 setEmail(value);
             } else if (name === "password") {
-                setPassword(value);
+                console.log(value);
             }
             msg = false;
         }
@@ -54,7 +57,7 @@ function LoginForm() {
             email: email,
             password: password
         }
-        let user = await fetch(form.action, {
+        let user = await fetch("http://192.168.25.4:8080/users/login", {
             method: "post",
             body: JSON.stringify(data),
             headers: {
@@ -72,7 +75,7 @@ function LoginForm() {
     }
 
     return (
-        <form className="form" action="http://192.168.25.4:8080/users/login" onSubmit={handleSubmit} noValidate method="POST">
+        <form className="form" onSubmit={handleSubmit} noValidate>
             <ul>
                 <li><label>Email</label></li>
                 <li><input name="email" type="text" required/></li>

@@ -43,7 +43,7 @@ function RegisterForm() {
             password: password
         }
         console.log(data)
-        let user= await fetch(form.action, {
+        let user= await fetch("http://192.168.25.4:8080/users/register", {
             method: "post",
             body: JSON.stringify(data),
             headers:{
@@ -118,7 +118,7 @@ function RegisterForm() {
 
     return (
 
-        <form className="form" action="http://192.168.25.5:8080/users/register" onSubmit={handleSubmit} noValidate>
+        <form className="form" onSubmit={handleSubmit} noValidate>
             <ul>
                 <li><label>Name</label></li>
                 <li><input name="name" type="text" onChange={onChange} required/></li>
